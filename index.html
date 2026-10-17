@@ -59,21 +59,23 @@ body{margin:0;background:#f6f7f9;font-family:-apple-system,"PingFang SC","Micros
     <div class="big">41.66<small>%</small></div>
     <div class="state">集中度回落</div>
   </div>
-  <div class="sub">集中度回落 · 超过 79.2% 的历史交易日</div>
+  <div class="sub">集中度上升，关注局部过热 · 超过 78.2% 的历史交易日</div>
   <div class="row"><span>上证指数</span><b>3716.28</b></div>
-  <div class="row"><span>全市场成交额</span><b>1.57万亿</b></div>
-  <div class="row"><span>前 5% 个股成交额</span><b>6536亿</b></div>
+  <div class="row"><span>全市场成交额</span><b>—</b></div>
+  <div class="row"><span>前 5% 个股成交额</span><b>—</b></div>
   <div class="row"><span>历史最高</span><b>57.3% · 2015-07-07</b></div>
   <div class="row"><span>历史最低</span><b>21.8% · 2016-04-15</b></div>
-  <div class="row"><span><i class="dot" style="background:#f5a623"></i>关注线 40%</span><b>累计 1117 天</b></div>
-  <div class="row"><span><i class="dot" style="background:#e03131"></i>预警线 50%</span><b>累计 72 天</b></div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee">
+    <div class="row" style="border-top:0;padding-top:2px"><span style="color:#f5a623;font-weight:600">关注线 40%</span><b>累计 1089 天</b></div>
+    <div class="row"><span style="color:#e03131;font-weight:600">预警线 50%</span><b>累计 78 天</b></div>
+  </div>
   <div class="grid">
     <div class="cell"><div class="l">上证指数</div><div class="v">3716.28</div></div>
-    <div class="cell"><div class="l">全市场成交额</div><div class="v">1.57万亿</div></div>
-    <div class="cell"><div class="l">前 5% 个股成交额</div><div class="v">6536亿</div></div>
+    <div class="cell"><div class="l">全市场成交额</div><div class="v">—</div></div>
+    <div class="cell"><div class="l">前 5% 个股成交额</div><div class="v">—</div></div>
     <div class="cell"><div class="l">历史最高 / 最低</div><div class="v">57.3% · 2015-07-07<br>21.8% · 2016-04-15</div></div>
-    <div class="cell"><div class="l">关注线 40% 累计</div><div class="v"><span style="color:#f5a623">●</span> 1117 天</div></div>
-    <div class="cell"><div class="l">预警线 50% 累计</div><div class="v"><span style="color:#e03131">●</span> 72 天</div></div>
+    <div class="cell"><div class="l" style="color:#f5a623;font-weight:600">关注线 40%</div><div class="v">累计 1089 天</div></div>
+    <div class="cell"><div class="l" style="color:#e03131;font-weight:600">预警线 50%</div><div class="v">累计 78 天</div></div>
   </div>
 </div>
 <div class="main">
@@ -109,7 +111,7 @@ chart.setOption({
   xAxis:{type:'time',axisLine:{lineStyle:{color:'#ddd'}},axisLabel:{color:'#999',fontSize:11}},
   yAxis:[
     {type:'value',min:0,max:60,position:'left',axisLabel:{formatter:'{value}%',color:'#999',fontSize:11},splitLine:{lineStyle:{color:'#f2f2f2'}}},
-    {type:'value',position:'right',scale:true,axisLabel:{color:'#c92a2a',fontSize:11},splitLine:{show:false}}],
+    {type:'value',min:1500,max:5500,position:'right',axisLabel:{color:'#c92a2a',fontSize:11},splitLine:{show:false}}],
   series:[
     {name:'拥挤度(左轴)',type:'line',yAxisIndex:0,data:cong.slice(0,gapAt+1),showSymbol:false,z:3,
      lineStyle:{width:1.6,color:'#1971c2'},
