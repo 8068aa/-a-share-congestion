@@ -54,7 +54,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:#f6f7f9;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#222}
 .card{max-width:none;margin:0 auto;padding:16px 22px 14px;display:flex;gap:26px;height:100vh;box-sizing:border-box;align-items:stretch}
-.side{width:232px;flex:none;overflow:auto}
+.side{width:232px;flex:none;overflow:auto;display:flex;flex-direction:column}
 .hd{display:flex;align-items:center;gap:8px}
 .hd b{font-size:17px}
 .tag{background:#fdeec9;color:#b8860b;font-size:11px;border-radius:4px;padding:2px 6px}
@@ -109,9 +109,9 @@ body{margin:0;background:#f6f7f9;font-family:-apple-system,"PingFang SC","Micros
   <div class="row"><span>上证指数</span><b>3716.28</b></div>
   <div class="row"><span>全市场成交额</span><b>—</b></div>
   <div class="row"><span>前 5% 个股成交额</span><b>—</b></div>
-  <div class="row"><span>历史最高</span><b>57.3% · 2015-07-07</b></div>
+  <div style="border-top:1px solid #eee;margin-top:6px;padding-top:8px"></div><div class="row" style="border-top:0"><span>历史最高</span><b>57.3% · 2015-07-07</b></div>
   <div class="row"><span>历史最低</span><b>21.8% · 2016-04-15</b></div>
-  <div style="margin-top:14px;padding-top:12px;border-top:1px solid #eee">
+  <div style="margin-top:auto;padding-top:12px;border-top:1px solid #eee;padding-bottom:4px">
     <div class="row" style="border-top:0;padding-top:2px"><span style="color:#f5a623;font-weight:600">关注线 40%</span><b>累计 1089 天</b></div>
     <div class="row"><span style="color:#e03131;font-weight:600">预警线 50%</span><b>累计 78 天</b></div>
   </div>
