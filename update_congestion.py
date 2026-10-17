@@ -97,7 +97,9 @@ def main():
     # 3) 生成 HTML
     import build_html  # noqa  若同目录存在 build_html.py 则调用
     build_html.render(hist, HTML)
-    print(f"完成: {len(hist)} 条 -> {HTML}")
+    if hasattr(build_html, "render_index"):
+        build_html.render_index(hist, "index.html")
+    print(f"完成: {len(hist)} 条 -> {HTML} + index.html")
 
 if __name__ == "__main__":
     main()
