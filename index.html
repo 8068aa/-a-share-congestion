@@ -6,8 +6,8 @@
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:#f6f7f9;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#222}
-.card{max-width:1280px;margin:0 auto;padding:20px 22px 30px;display:flex;gap:26px}
-.side{width:232px;flex:none}
+.card{max-width:none;margin:0 auto;padding:16px 22px 14px;display:flex;gap:26px;height:100vh;box-sizing:border-box;align-items:stretch}
+.side{width:232px;flex:none;overflow:auto}
 .hd{display:flex;align-items:center;gap:8px}
 .hd b{font-size:17px}
 .tag{background:#fdeec9;color:#b8860b;font-size:11px;border-radius:4px;padding:2px 6px}
@@ -21,7 +21,7 @@ body{margin:0;background:#f6f7f9;font-family:-apple-system,"PingFang SC","Micros
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
 .grid{display:none}
 .state{display:none}
-.main{flex:1;min-width:0}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
 .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap}
 .btns{display:flex;background:#f1f2f4;border-radius:10px;padding:3px;gap:2px}
 .btns button{border:0;background:transparent;padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer;color:#555;white-space:nowrap}
@@ -29,10 +29,12 @@ body{margin:0;background:#f6f7f9;font-family:-apple-system,"PingFang SC","Micros
 .btns button.dark{background:#222;color:#fff}
 .leg{font-size:12px;color:#777;white-space:nowrap}
 .leg i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin:0 4px 0 12px}
-#chart{width:100%;height:520px;background:#fff;border-radius:12px}
+#chart{width:100%;flex:1;min-height:0;height:auto;background:#fff;border-radius:12px}
 .foot{font-size:11px;color:#aaa;margin-top:8px;line-height:1.6}
 @media(max-width:899px){
-  .card{flex-direction:column;gap:0;padding:14px 14px 26px;max-width:520px}
+  .card{flex-direction:column;gap:0;padding:14px 14px 26px;max-width:520px;height:auto;align-items:stretch}
+  .main{display:block}
+  #chart{flex:none;height:58vh;min-height:340px}
   .side{width:100%}
   .hd .asof{margin-left:auto}
   .hero{display:flex;align-items:flex-end;justify-content:space-between;margin:14px 0 4px}
@@ -49,7 +51,8 @@ body{margin:0;background:#f6f7f9;font-family:-apple-system,"PingFang SC","Micros
   .leg{font-size:11px;color:#888;margin-bottom:2px;order:-1;width:100%}
   #chart{height:58vh;min-height:340px}
 }
-</style></head><body><div class="card">
+</style><base target="_blank">
+</head><body><div class="card">
 <div class="side">
   <div class="hd"><b>大盘拥挤度</b><span class="tag">关注</span><span class="asof">截至 2026-10-16</span></div>
   <div class="hero">
