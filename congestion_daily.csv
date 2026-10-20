@@ -3611,4 +3611,6 @@
 {"date": "2026-07-29", "congestionPercent": 51.04, "close": 3828.47}
 {"date": "2026-07-30", "congestionPercent": 51.66, "close": 3804.69}
 {"date": "2026-07-31", "congestionPercent": 51.36, "close": 3832.26}
+{"date": "2026-08-03", "congestionPercent": 48.19, "close": 3809.66}
 {"date": "2026-10-19", "congestionPercent": 42.07, "close": 3730.92, "n": 5574, "k": 279, "totalAmountYi": 14484, "top5AmountYi": 6093}
+{"date": "2026-10-20", "congestionPercent": 43.13, "close": 3735.37, "n": 5574, "k": 279, "totalAmountYi": 14712, "top5AmountYi": 6345}
