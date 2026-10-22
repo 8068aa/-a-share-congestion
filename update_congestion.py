@@ -96,7 +96,8 @@ def main():
             f.write(json.dumps(h, ensure_ascii=False) + "\n")
     # 3) 生成 HTML
     import build_html  # noqa  若同目录存在 build_html.py 则调用
-    build_html.render(hist, HTML)
+    if hasattr(build_html, "render"):
+        build_html.render(hist, HTML)
     if hasattr(build_html, "render_index"):
         build_html.render_index(hist, "index.html")
     print(f"完成: {len(hist)} 条 -> {HTML} + index.html")
