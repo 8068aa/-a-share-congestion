@@ -13,8 +13,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: 抓取并计算
-        run: python update_congestion.py || true
+      - name: 抓取并计算（失败自动重试）
+        run: |
+          TODAY=$(date +%F)
+          for i in 1 2 3; do
+            python update_congestion.py
+            if grep -q "\"date\": \"$TODAY\"" congestion_daily.csv; then
+              echo "已写入 $TODAY 数据"
+              exit 0
+            fi
+            if [ $i -lt 3 ]; then
+              echo "未获取到 $TODAY 数据，10 分钟后第 $((i+1)) 次重试"
+              sleep 600
+            else
+              echo "重试 3 次后仍未获取到 $TODAY 数据，今日数据缺失（历史缺口将由基线数据后续补回）"
+            fi
+          done
       - name: 提交更新
         run: |
           git config user.name  "github-actions[bot]"
