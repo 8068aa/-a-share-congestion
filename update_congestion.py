@@ -82,12 +82,17 @@ def main():
     snap = sina_snapshot()
     today = datetime.date.today().strftime("%Y-%m-%d")
     wd = datetime.date.today().weekday()
-    if snap and wd < 5:
-        last_total = hist[-1].get("totalAmountYi") if hist else None
-        if not any(h["date"] == today for h in hist) and snap["totalAmountYi"] != last_total:
-            cong = round(snap["top5AmountYi"] / snap["totalAmountYi"] * 100, 2)
-            row = {"date": today, "congestionPercent": cong,
-                   "close": sh_close(today), **snap}
+    if snap and snap["totalAmountYi"] > 0 and wd < 5:
+        cong = round(snap["top5AmountYi"] / snap["totalAmountYi"] * 100, 2)
+        existing = next((h for h in hist if h["date"] == today), None)
+        close = sh_close(today)
+        if close is None and existing:
+            close = existing.get("close")
+        row = {"date": today, "congestionPercent": cong, "close": close, **snap}
+        if existing:
+            existing.update(row)
+            print(f"[更新] {today} 拥挤度 {cong}%  (全市场 {snap['totalAmountYi']}亿 / 前5% {snap['top5AmountYi']}亿)")
+        else:
             hist.append(row)
             print(f"[追加] {today} 拥挤度 {cong}%  (全市场 {snap['totalAmountYi']}亿 / 前5% {snap['top5AmountYi']}亿)")
     hist.sort(key=lambda x: x["date"])

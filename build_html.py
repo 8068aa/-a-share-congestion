@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-"""生成自包含交互页：index.html(自适应) + 大盘拥挤度_A股.html(桌面版)"""
-import json, os, datetime
+"""根据完整历史数据生成自适应网页，所有统计均从最新记录动态计算。"""
+import datetime
+import json
+from pathlib import Path
 
-TPL_INDEX = "<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<meta name=\"theme-color\" content=\"#f6f7f9\">\n<title>A股大盘拥挤度</title>\n@@ECHARTS@@\n<style>\n*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}\nbody{margin:0;background:#f6f7f9;font-family:-apple-system,\"PingFang SC\",\"Microsoft YaHei\",sans-serif;color:#222}\n.card{max-width:none;margin:0 auto;padding:16px 22px 14px;display:flex;gap:26px;height:100vh;box-sizing:border-box;align-items:stretch}\n.side{width:232px;flex:none;overflow:auto;display:flex;flex-direction:column}\n.hd{display:flex;align-items:center;gap:8px}\n.hd b{font-size:17px}\n.tag{background:#fdeec9;color:#b8860b;font-size:11px;border-radius:4px;padding:2px 6px}\n.asof{font-size:12px;color:#999}\n.big{font-size:46px;font-weight:700;color:#f5a623;margin:12px 0 4px;line-height:1;font-variant-numeric:tabular-nums}\n.big small{font-size:20px}\n.sub{font-size:12px;color:#888;margin-bottom:12px}\n.row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-top:1px solid #f0f0f0}\n.row span:first-child{color:#999}\n.row b{font-weight:600;font-variant-numeric:tabular-nums}\n.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}\n.grid{display:none}\n.state{display:none}\n.main{flex:1;min-width:0;display:flex;flex-direction:column}\n.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap}\n.btns{display:flex;background:#f1f2f4;border-radius:10px;padding:3px;gap:2px}\n.btns button{border:0;background:transparent;padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer;color:#555;white-space:nowrap}\n.btns button.on{background:#222;color:#fff}\n.btns button.dark{background:#222;color:#fff}\n.leg{font-size:12px;color:#777;white-space:nowrap}\n.leg i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin:0 4px 0 12px}\n#chart{width:100%;flex:1;min-height:0;height:auto;background:#fff;border-radius:12px}\n.foot{font-size:11px;color:#aaa;margin-top:8px;line-height:1.6}\n@media(max-width:899px){\n  .card{flex-direction:column;gap:0;padding:14px 14px 26px;max-width:520px;height:auto;align-items:stretch}\n  .main{display:block}\n  #chart{flex:none;height:58vh;min-height:340px}\n  .side{width:100%}\n  .hd .asof{margin-left:auto}\n  .hero{display:flex;align-items:flex-end;justify-content:space-between;margin:14px 0 4px}\n  .big{font-size:44px;margin:0}\n  .state{display:inline-block;font-size:12px;color:#e67700;background:#fff4e0;border-radius:20px;padding:5px 12px;margin-bottom:4px}\n  .row{display:none}\n  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#eee;border-radius:12px;overflow:hidden;margin:14px 0}\n  .cell{background:#fff;padding:12px 14px}\n  .cell .l{font-size:11px;color:#999;margin-bottom:4px}\n  .cell .v{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}\n  .bar{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}\n  .bar::-webkit-scrollbar{display:none}\n  .btns button{padding:8px 16px;border-radius:18px}\n  .leg{font-size:11px;color:#888;margin-bottom:2px;order:-1;width:100%}\n  #chart{height:58vh;min-height:340px}\n}\n</style></head><body><div class=\"card\">\n<div class=\"side\">\n  <div class=\"hd\"><b>大盘拥挤度</b><span class=\"tag\">关注</span><span class=\"asof\">@@ASOF@@</span></div>\n  <div class=\"hero\">\n    <div class=\"big\">@@CUR@@<small>%</small></div>\n    <div class=\"state\">@@TREND@@</div>\n  </div>\n  <div class=\"sub\">集中度上升，关注局部过热 · 超过 78.2% 的历史交易日</div>\n  <div class=\"row\"><span>上证指数</span><b>3716.28</b></div>\n  <div class=\"row\"><span>全市场成交额</span><b>—</b></div>\n  <div class=\"row\"><span>前 5% 个股成交额</span><b>—</b></div>\n  <div style=\"border-top:1px solid #eee;margin-top:6px;padding-top:8px\"></div><div class=\"row\" style=\"border-top:0\"><span>历史最高</span><b>@@HI@@</b></div>\n  <div class=\"row\"><span>历史最低</span><b>@@LO@@</b></div>\n  <div style=\"margin-top:auto;padding-top:12px;border-top:1px solid #eee;padding-bottom:4px\">\n    <div class=\"row\" style=\"border-top:0;padding-top:2px\"><span style=\"color:#f5a623;font-weight:600\">关注线 40%</span><b>累计 1089 天</b></div>\n    <div class=\"row\"><span style=\"color:#e03131;font-weight:600\">预警线 50%</span><b>累计 78 天</b></div>\n  </div>\n  <div class=\"grid\">\n    <div class=\"cell\"><div class=\"l\">上证指数</div><div class=\"v\">3716.28</div></div>\n    <div class=\"cell\"><div class=\"l\">全市场成交额</div><div class=\"v\">—</div></div>\n    <div class=\"cell\"><div class=\"l\">前 5% 个股成交额</div><div class=\"v\">—</div></div>\n    <div class=\"cell\"><div class=\"l\">历史最高 / 最低</div><div class=\"v\">@@HI@@<br>@@LO@@</div></div>\n    <div class=\"cell\"><div class=\"l\" style=\"color:#f5a623;font-weight:600\">关注线 40%</div><div class=\"v\">累计 1089 天</div></div>\n    <div class=\"cell\"><div class=\"l\" style=\"color:#e03131;font-weight:600\">预警线 50%</div><div class=\"v\">累计 78 天</div></div>\n  </div>\n</div>\n<div class=\"main\">\n  <div class=\"bar\">\n    <div class=\"btns\">\n      <button data-r=\"1y\">近1年</button><button data-r=\"3y\">近3年</button>\n      <button data-r=\"5y\">近5年</button><button data-r=\"all\" class=\"on\">全部</button>\n      <button id=\"shBtn\" class=\"dark\">叠加上证指数</button>\n    </div>\n    <div class=\"leg\"><i style=\"background:#1971c2\"></i>拥挤度(左轴)<i style=\"background:#e03131\"></i>上证指数(右轴)</div>\n  </div>\n  <div id=\"chart\"></div>\n  <div class=\"foot\">口径：沪深A股成交额排名前5%个股成交额占全市场比重 · 数据源：新浪财经快照实时计算（全历史基线：乐咕乐股）· 每交易日收盘后自动更新</div>\n</div></div>\n<script>\nvar DATA = @@DATA@@;\nvar chart = echarts.init(document.getElementById('chart'));\nfunction sd(k){return DATA.days.map(function(d,i){return [DATA.base+d*86400000, DATA[k][i]/10];});}\nvar gapAt = DATA.days.length-2;\nvar cong=sd('cong'), cls=sd('close');\nfunction gridOpt(){\n  var wide = window.innerWidth >= 900;\n  return {left: wide?52:46, right: wide?64:52, top:26, bottom: wide?46:30};\n}\nchart.setOption({\n  animation:false,\n  grid: gridOpt(),\n  tooltip:{trigger:'axis',axisPointer:{type:'cross',label:{show:false}},\n    formatter:function(ps){var d=new Date(ps[0].value[0]);\n      var s=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');\n      ps.forEach(function(p){if(p.seriesName!=='gap')s+='<br>'+p.marker+p.seriesName+'：<b>'+(p.seriesName.indexOf('上证')>=0?p.value[1].toFixed(2):p.value[1].toFixed(1)+'%')+'</b>';});\n      return s;}},\n  xAxis:{type:'time',axisLine:{lineStyle:{color:'#ddd'}},axisLabel:{color:'#999',fontSize:11}},\n  yAxis:[\n    {type:'value',min:0,max:60,position:'left',axisLabel:{formatter:'{value}%',color:'#999',fontSize:11},splitLine:{lineStyle:{color:'#f2f2f2'}}},\n    {type:'value',min:1500,max:5500,position:'right',axisLabel:{color:'#c92a2a',fontSize:11},splitLine:{show:false}}],\n  series:[\n    {name:'拥挤度(左轴)',type:'line',yAxisIndex:0,data:cong.slice(0,gapAt+1),showSymbol:false,z:3,\n     lineStyle:{width:1.6,color:'#1971c2'},\n     markLine:{silent:true,symbol:'none',data:[\n       {yAxis:40,lineStyle:{color:'#f5a623',type:'dashed'},label:{formatter:'40% 关注线',color:'#f5a623',fontSize:11}},\n       {yAxis:50,lineStyle:{color:'#e03131',type:'dashed'},label:{formatter:'50% 预警线',color:'#e03131',fontSize:11}}]}},\n    {name:'gap',type:'line',yAxisIndex:0,data:[cong[gapAt],cong[cong.length-1]],showSymbol:false,z:2,\n     lineStyle:{width:1.6,color:'#1971c2',type:'dashed'}},\n    {name:'上证指数(右轴)',type:'line',yAxisIndex:1,data:cls,showSymbol:false,z:1,\n     lineStyle:{width:1.4,color:'#e03131',opacity:.85}}]\n});\nvar showSH=true;\ndocument.querySelectorAll('button[data-r]').forEach(function(b){b.onclick=function(){\n  document.querySelectorAll('button[data-r]').forEach(function(x){x.classList.remove('on')});\n  b.classList.add('on');\n  var r=b.dataset.r, max=DATA.base+DATA.days[DATA.days.length-1]*86400000;\n  var m={'1y':365,'3y':1096,'5y':1827};\n  chart.setOption({xAxis:{min:r==='all'?null:max-m[r]*86400000,max:max}});\n};});\ndocument.getElementById('shBtn').onclick=function(){\n  showSH=!showSH;this.classList.toggle('dark',showSH);\n  chart.setOption({series:[{},{},{lineStyle:{opacity:showSH?.85:0}}],yAxis:[{},{show:showSH}]});\n};\nwindow.addEventListener('resize',function(){chart.resize();chart.setOption({grid:gridOpt()});});\n</script></body></html>"
+BASE = Path(__file__).resolve().parent
+
 
 def _series(hist):
     t0 = datetime.date.fromisoformat(hist[0]["date"])
@@ -12,31 +15,65 @@ def _series(hist):
         d = datetime.date.fromisoformat(h["date"])
         days.append((d - t0).days)
         cong.append(round(h["congestionPercent"] * 10))
-        close.append(round(h["close"] * 10) if h.get("close") else None)
+        close.append(round(h["close"] * 10) if h.get("close") is not None else None)
     return {"base": base, "days": days, "cong": cong, "close": close}
 
+
+def _amount(value):
+    return f"{value:,.0f} 亿元" if value is not None else "—"
+
+
 def render_index(hist, out_path="index.html"):
-    pcts = [h["congestionPercent"] for h in hist if h.get("congestionPercent") is not None]
-    last = hist[-1]; cur = last["congestionPercent"]
-    hi, lo = max(pcts), min(pcts)
-    hi_d = next(h["date"] for h in hist if h["congestionPercent"] == hi)
-    lo_d = next(h["date"] for h in hist if h["congestionPercent"] == lo)
-    trend = "集中度上升，关注局部过热" if (len(pcts) > 1 and cur >= pcts[-2]) else "集中度回落"
-    if os.path.exists("echarts.min.js"):
-        echarts = "<script>/* ECharts 5.5.0 已内嵌 */\n" + open("echarts.min.js", encoding="utf-8").read() + "\n</script>"
+    if not hist:
+        raise ValueError("没有可生成网页的历史数据")
+    hist = sorted(hist, key=lambda h: h["date"])
+    valid = [h for h in hist if h.get("congestionPercent") is not None]
+    last = valid[-1]
+    cur = last["congestionPercent"]
+    hi_row = max(valid, key=lambda h: h["congestionPercent"])
+    lo_row = min(valid, key=lambda h: h["congestionPercent"])
+    previous = valid[-2]["congestionPercent"] if len(valid) > 1 else cur
+    trend = "集中度上升，关注局部过热" if cur >= previous else "集中度回落"
+    percentile = sum(h["congestionPercent"] < cur for h in valid) / len(valid) * 100
+    latest_close = next((h["close"] for h in reversed(valid) if h.get("close") is not None), None)
+    replacements = {
+        "@@ASOF@@": last["date"],
+        "@@CUR@@": f"{cur:.2f}",
+        "@@TREND@@": trend,
+        "@@PERCENTILE@@": f"{percentile:.1f}",
+        "@@CLOSE@@": f"{latest_close:.2f}" if latest_close is not None else "—",
+        "@@TOTAL@@": _amount(last.get("totalAmountYi")),
+        "@@TOP5@@": _amount(last.get("top5AmountYi")),
+        "@@HI@@": f"{hi_row['congestionPercent']:.1f}% · {hi_row['date']}",
+        "@@LO@@": f"{lo_row['congestionPercent']:.1f}% · {lo_row['date']}",
+        "@@DAYS40@@": str(sum(h["congestionPercent"] >= 40 for h in valid)),
+        "@@DAYS50@@": str(sum(h["congestionPercent"] >= 50 for h in valid)),
+        "@@DATA@@": json.dumps(_series(valid), ensure_ascii=False, separators=(",", ":")),
+    }
+    echarts_path = BASE / "echarts.min.js"
+    if echarts_path.exists():
+        echarts = "<script>/* ECharts 5.5.0 已内嵌 */\n" + echarts_path.read_text(encoding="utf-8") + "\n</script>"
     else:
         echarts = '<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.5.0/echarts.min.js"></script>'
-    html = (TPL_INDEX
-        .replace("@@ECHARTS@@", echarts)
-        .replace("@@ASOF@@", last["date"])
-        .replace("@@CUR@@", "%.2f" % cur)
-        .replace("@@TREND@@", trend)
-        .replace("@@HI@@", "%.1f%% · %s" % (hi, hi_d))
-        .replace("@@LO@@", "%.1f%% · %s" % (lo, lo_d))
-        .replace("var DATA = @@DATA@@;", "var DATA = " + json.dumps(_series(hist), ensure_ascii=False, separators=(",", ":")) + ";"))
-    open(out_path, "w", encoding="utf-8").write(html)
+    replacements["@@ECHARTS@@"] = echarts
+    html = (BASE / "template.html").read_text(encoding="utf-8")
+    for key, value in replacements.items():
+        html = html.replace(key, value)
+    if "@@" in html:
+        raise ValueError("网页模板仍有未替换的占位符")
+    output = Path(out_path)
+    if not output.is_absolute():
+        output = BASE / output
+    output.write_text(html, encoding="utf-8")
+
+
+def render(hist, out_path="大盘拥挤度_A股.html"):
+    """兼容每日更新脚本的桌面版入口。"""
+    render_index(hist, out_path)
+
 
 if __name__ == "__main__":
-    hist = [json.loads(l) for l in open("congestion_daily.csv", encoding="utf-8") if l.strip()]
-    render_index(hist, "index.html")
-    print("index.html regenerated,", len(hist), "rows")
+    hist = [json.loads(line) for line in (BASE / "congestion_daily.csv").read_text(encoding="utf-8").splitlines() if line.strip()]
+    for filename in ("index.html", "desktop.html", "大盘拥挤度_A股.html"):
+        render_index(hist, filename)
+    print(f"已根据 {len(hist)} 条记录重新生成全部网页")
