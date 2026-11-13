@@ -3679,3 +3679,4 @@
 {"date": "2026-11-10", "congestionPercent": 42.73, "close": 3663.72, "n": 5579, "k": 279, "totalAmountYi": 15166, "top5AmountYi": 6481}
 {"date": "2026-11-11", "congestionPercent": 46.08, "close": 3680.64, "n": 5350, "k": 268, "totalAmountYi": 15981, "top5AmountYi": 7364}
 {"date": "2026-11-12", "congestionPercent": 47.35, "close": 3655.83, "n": 5579, "k": 279, "totalAmountYi": 19456, "top5AmountYi": 9212}
+{"date": "2026-11-13", "congestionPercent": 45.46, "close": 3634.35, "n": 5578, "k": 279, "totalAmountYi": 16669, "top5AmountYi": 7578}
